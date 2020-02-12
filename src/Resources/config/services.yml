@@ -1,0 +1,34 @@
+services:
+
+  # Twig
+  dbout.helper_bundle.twig:
+    class: Dbout\Bundle\SymfonyHelperBundle\Twig\Extension\DboutSymfonyHelperTwig
+    arguments: ['@dbout.helper_bundle.routing']
+    tags:
+      - {name: twig.extension}
+
+  # Routing
+  dbout.helper_bundle.routing:
+    class : Dbout\Bundle\SymfonyHelperBundle\Helper\Routing\RoutingHelper
+    public: true
+    arguments: ['@request_stack', '@router.default']
+  Dbout\Bundle\SymfonyHelperBundle\Helper\Routing\RoutingHelper: '@dbout.helper_bundle.routing'
+
+  # Path
+  dbout.helper_bundle.path:
+    class: Dbout\Bundle\SymfonyHelperBundle\Helper\Path\PathHelper
+    public: true
+    arguments: ['@kernel']
+  Dbout\Bundle\SymfonyHelperBundle\Helper\Path\PathHelper: '@dbout.helper_bundle.path'
+
+  # Mailer
+  dbout.bundle.abstract_mailer:
+    class: Dbout\Bundle\SymfonyHelperBundle\Mailer\AbstractMailer
+    abstract: true
+    calls:
+      - [_init]
+
+  # Event listener
+  Dbout\Bundle\SymfonyHelperBundle\EventListener\Entity\EntitySubscriber:
+    tags:
+      - { name: 'doctrine.event_subscriber' }

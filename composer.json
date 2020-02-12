@@ -1,0 +1,30 @@
+{
+  "name": "dbout/dbout-symfony-helper-bundle",
+  "description": "Bundle containing tools to simplify development on Symfony 4",
+  "type": "symfony-bundle",
+  "license": "MIT",
+  "keywords": ["symfony", "bundle", "tools"],
+  "homepage": "https://github.com/dimitriBouteille/dbout-symfony-helper-bundle",
+  "support": {
+    "issues": "https://github.com/dimitriBouteille/dbout-symfony-helper-bundle/issues"
+  },
+  "authors": [
+    {
+      "name": "Dimitri Bouteille",
+      "email": "bonjour@dimitri-bouteille.fr",
+      "homepage": "https://github.com/dimitriBouteille",
+      "role": "Developer"
+    }
+  ],
+  "require": {
+    "php":                      "^7.1",
+    "symfony/framework-bundle": "^4.3 || ^5.0",
+    "twig/twig":                "^2.0 || ^3.0"
+  },
+  "minimum-stability": "dev",
+  "autoload": {
+    "psr-4": {
+      "Dbout\\Bundle\\SymfonyHelperBundle\\": "src/"
+    }
+  }
+}
