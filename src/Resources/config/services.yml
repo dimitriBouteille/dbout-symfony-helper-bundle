@@ -32,3 +32,10 @@ services:
   Dbout\Bundle\SymfonyHelperBundle\EventListener\Entity\EntitySubscriber:
     tags:
       - { name: 'doctrine.event_subscriber' }
+
+  # Form Type
+  dbout.helper_bundle.form.type:
+    class: Dbout\Bundle\SymfonyHelperBundle\Form\Type\SubmitWithSvgIconType
+    arguments: ['@service_container']
+    tags:
+      - {name: form.type}

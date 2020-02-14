@@ -1,0 +1,172 @@
+
+{# DEFAULT ATTRIBUTES #}
+{% block base_attributes %}
+    id="{{ id }}" name="{{ full_name }}"
+    {%- if disabled %} disabled{% endif -%}
+    {%- if required %} required{% endif -%}
+    {{ block('attributes') }}
+{% endblock %}
+{% block attributes %}
+    {%- for attrname, attrvalue in attr -%}
+        {{- " " -}}
+        {%- if attrname in ['placeholder', 'title'] -%}
+            {{- attrname }}="{{ translation_domain is same as(false) ? attrvalue : attrvalue|trans(attr_translation_parameters, translation_domain) }}"
+        {%- elseif attrvalue is same as(true) -%}
+            {{- attrname }}="{{ attrname }}"
+        {%- elseif attrvalue is not same as(false) -%}
+            {{- attrname }}="{{ attrvalue }}"
+        {%- endif -%}
+    {%- endfor -%}
+{% endblock %}
+
+{# ROW #}
+{% block form_row  %}
+    {%- set widget_attr = {} -%}
+    {%- if help is not empty -%}
+        {%- set widget_attr = {attr: {'aria-describedby': id ~"_help"}} -%}
+    {%- endif -%}
+
+    {% set parentAttr = row_attr|merge({class: (parentAttr.class|default('') ~ ' app-field')|trim}) %}
+
+    {% if disabled %}
+        {% set parentAttr = parentAttr|merge({class: (parentAttr.class|default('') ~ ' is-disabled')|trim}) %}
+    {% endif %}
+
+    <div{% with {attr: parentAttr} %}{{ block('attributes') }}{% endwith %}>
+        {{ form_widget(form, widget_attr) }}
+        {{ form_label(form) }}
+        {{ form_help(form) }}
+        {{ form_errors(form) }}
+    </div>
+{% endblock %}
+
+{# LABEL #}
+{% block form_label -%}
+    {% if label is not same as(false) -%}
+
+        {# Add custom class and for attribut #}
+        {% set label_attr = label_attr|merge({for: id}) %}
+        {% set label_attr = label_attr|merge({class: (label_attr.class|default('') ~ ' app-field-label')|trim}) %}
+
+        {# Required field #}
+        {% if required -%}
+            {% set label_attr = label_attr|merge({class: (label_attr.class|default('') ~ ' is-required')|trim}) %}
+        {%- endif -%}
+
+        {% if disabled %}
+            {% set label_attr = label_attr|merge({class: (label_attr.class|default('') ~ ' is-disabled')|trim}) %}
+        {% endif %}
+
+        {% if label is empty -%}
+            {%- if label_format is not empty -%}
+                {% set label = label_format|replace({
+                    '%name%': name,
+                    '%id%': id,
+                }) %}
+            {%- else -%}
+                {% set label = name|humanize %}
+            {%- endif -%}
+        {%- endif -%}
+
+        <label{% if label_attr %}{% with { attr: label_attr } %}{{ block('attributes') }}{% endwith %}{% endif %}>{{ translation_domain is same as(false) ? label : label|trans(label_translation_parameters, translation_domain) }}{% block form_label_errors %}{{- form_errors(form) -}}{% endblock form_label_errors %}</label>
+    {%- endif -%}
+{%- endblock form_label %}
+
+{# HELP MESSAGE #}
+{% block form_help -%}
+    {% if help is not empty %}
+        {% set help_attr = help_attr|merge({class: (help_attr.class|default('') ~ ' app-field-help')|trim}) %}
+        <p id="{{ id }}_help"{% with { attr: help_attr } %}{{ block('attributes') }}{% endwith %}>
+            {% if translation_domain is same as(false) %}
+                {% if help_html is same as(false) %}
+                    {{ help }}
+                {% else -%}
+                    {{ help|raw }}
+                {% endif -%}
+            {% else -%}
+                {% if help_html is same as(false) %}
+                    {{ help|trans(help_translation_parameters, translation_domain) }}
+                {% else %}
+                    {{ help|trans(help_translation_parameters, translation_domain)|raw }}
+                {% endif %}
+            {% endif %}
+        </p>
+    {% endif %}
+{% endblock form_help %}
+
+{# SELECT #}
+{% block choice_widget_collapsed %}
+    {% if required and placeholder is none and not placeholder_in_choices and not multiple and (attr.size is not defined or attr.size <= 1) %}
+        {% set required = false %}
+    {% endif %}
+
+    {% set attr = attr|merge({class: (attr.class|default('') ~ ' app-field-input')|trim}) %}
+
+    <select {{ block('widget_attributes') }}{% if multiple %} multiple="multiple"{% endif %}>
+        {%- if placeholder is not none -%}
+            <option value=""{% if required and value is empty %} selected="selected"{% endif %}>{{ placeholder != '' ? (translation_domain is same as(false) ? placeholder : placeholder|trans({}, translation_domain)) }}</option>
+        {%- endif -%}
+        {%- if preferred_choices|length > 0 -%}
+            {% set options = preferred_choices %}
+            {% set render_preferred_choices = true %}
+            {{- block('choice_widget_options') -}}
+            {%- if choices|length > 0 and separator is not none -%}
+                <option disabled="disabled">{{ separator }}</option>
+            {%- endif -%}
+        {%- endif -%}
+        {%- set options = choices -%}
+        {%- set render_preferred_choices = false -%}
+        {{- block('choice_widget_options') -}}
+    </select>
+{%- endblock choice_widget_collapsed -%}
+
+{# BUTTON #}
+{% block button_label %}
+    {% if label is empty %}
+        {% if label_format is not empty %}
+            {% set label = label_format|replace({
+                '%name%': name,
+                '%id%': id,
+            }) %}
+        {% elseif label is not same as(false) %}
+            {% set label = name|humanize %}
+        {% endif %}
+    {%- endif -%}
+
+    <span class="form-button-label">{{ translation_domain is same as(false) or label is same as(false) ? label : label|trans(label_translation_parameters, translation_domain) }}</span>
+{% endblock %}
+{% block button_start %}
+    {% set attr = attr|merge({class: (attr.class|default('') ~ ' form-button')|trim}) %}
+    <button type="{{ type|default('button') }}" {{ block('button_attributes') }}>
+{% endblock %}
+{% block button_widget %}
+    {{ block('button_start') }}
+        {{ block('button_label') }}
+    </button>
+{% endblock button_widget %}
+{% block button_submit_svg_icon_widget %}
+    {{ block('button_start') }}
+        {% if svgPosition == 'right' %}
+            {{ block('button_label') }}
+            <span class="form-button-icon">{{ svgIcon|raw }}</span>
+        {% else %}
+            <span class="form-button-icon">{{ svgIcon|raw }}</span>
+            {{ block('button_label') }}
+        {% endif %}
+    </button>
+{% endblock %}
+
+{# INPUT #}
+{% block form_widget_simple  %}
+    {%- set type = type|default('text') -%}
+    {% set attr = attr|merge({class: (attr.class|default('') ~ ' app-field-input')|trim}) %}
+
+    <input type="{{ type }}" {{ block('base_attributes') }}{% if value is not empty %} value="{{ value }}" {% endif %}/>
+{% endblock %}
+
+{# TEXTAREA #}
+{% block textarea_widget  %}
+    {% set attr = attr|merge({class: (attr.class|default('') ~ ' app-field-input')|trim}) %}
+    <textarea {{ block('base_attributes') }}>{{ value }}</textarea>
+{% endblock %}
+

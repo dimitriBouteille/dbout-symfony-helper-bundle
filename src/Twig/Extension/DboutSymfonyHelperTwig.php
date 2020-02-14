@@ -32,6 +32,7 @@ class DboutSymfonyHelperTwig extends AbstractExtension
      */
     public function getFunctions()
     {
+        $config = ['is_safe' => ['html',]];
         return [
             new TwigFunction('isRoute', [$this, 'isRoute']),
         ];
