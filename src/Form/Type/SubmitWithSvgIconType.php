@@ -4,17 +4,18 @@ namespace Dbout\Bundle\SymfonyHelperBundle\Form\Type;
 
 use Dbout\Bundle\SvgLoaderBundle\Loader\DboutSvgLoaderInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\ButtonType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
+use Symfony\Component\Form\SubmitButtonTypeInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
  * Class SubmitWithSvgIconType
+ * https://github.com/symfony/symfony/issues/20528
  * @package Dbout\Bundle\SymfonyHelperBundle\Form\Type
  */
-class SubmitWithSvgIconType extends AbstractType
+class SubmitWithSvgIconType extends SubmitType implements SubmitButtonTypeInterface
 {
 
     /**
@@ -47,6 +48,7 @@ class SubmitWithSvgIconType extends AbstractType
         ]);
 
         $resolver->addAllowedValues('iconPosition', ['left', 'right']);
+        $resolver->isRequired('iconName');
     }
 
     /**
@@ -55,14 +57,6 @@ class SubmitWithSvgIconType extends AbstractType
     public function getBlockPrefix()
     {
         return 'button_submit_svg_icon';
-    }
-
-    /**
-     * @return string|null
-     */
-    public function getParent()
-    {
-        return ButtonType::class;
     }
 
     /**
