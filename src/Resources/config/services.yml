@@ -3,7 +3,7 @@ services:
   # Twig
   dbout.helper_bundle.twig:
     class: Dbout\Bundle\SymfonyHelperBundle\Twig\Extension\DboutSymfonyHelperTwig
-    arguments: ['@dbout.helper_bundle.routing']
+    arguments: ['@dbout.helper_bundle.routing', '@dbout.helper_bundle.pagination']
     tags:
       - {name: twig.extension}
 
@@ -20,6 +20,13 @@ services:
     public: true
     arguments: ['@kernel']
   Dbout\Bundle\SymfonyHelperBundle\Helper\Path\PathHelper: '@dbout.helper_bundle.path'
+
+  # Pagination Helper
+  dbout.helper_bundle.pagination:
+    class: Dbout\Bundle\SymfonyHelperBundle\Helper\PaginationHelper
+    public: true
+    arguments: ['@router.default', '@request_stack']
+  Dbout\Bundle\SymfonyHelperBundle\Helper\PaginationHelper: '@dbout.helper_bundle.pagination'
 
   # Mailer
   dbout.bundle.abstract_mailer:

@@ -1,3 +1,4 @@
+{# Exemples : https://github.com/symfony/symfony/blob/master/src/Symfony/Bridge/Twig/Resources/views/Form/bootstrap_4_horizontal_layout.html.twig #}
 
 {# DEFAULT ATTRIBUTES #}
 {% block base_attributes %}
@@ -19,6 +20,18 @@
     {%- endfor -%}
 {% endblock %}
 
+{# ROW START #}
+{% block row_start %}
+
+    {% set parentAttr = row_attr|merge({class: (parentAttr.class|default('') ~ ' app-field')|trim}) %}
+    {% if disabled %}
+        {% set parentAttr = parentAttr|merge({class: (parentAttr.class|default('') ~ ' is-disabled')|trim}) %}
+    {% endif %}
+
+    <div{% with {attr: parentAttr} %}{{ block('attributes') }}{% endwith %}>
+
+{% endblock %}
+
 {# ROW #}
 {% block form_row  %}
     {%- set widget_attr = {} -%}
@@ -26,13 +39,7 @@
         {%- set widget_attr = {attr: {'aria-describedby': id ~"_help"}} -%}
     {%- endif -%}
 
-    {% set parentAttr = row_attr|merge({class: (parentAttr.class|default('') ~ ' app-field')|trim}) %}
-
-    {% if disabled %}
-        {% set parentAttr = parentAttr|merge({class: (parentAttr.class|default('') ~ ' is-disabled')|trim}) %}
-    {% endif %}
-
-    <div{% with {attr: parentAttr} %}{{ block('attributes') }}{% endwith %}>
+    {{ block('row_start') }}
         {{ form_widget(form, widget_attr) }}
         {{ form_label(form) }}
         {{ form_help(form) }}
@@ -144,13 +151,23 @@
         {{ block('button_label') }}
     </button>
 {% endblock button_widget %}
+{% block submit_row  %}
+    {# Remove div container #}
+    {{- form_widget(form) -}}
+{% endblock %}
+
+{# BUTTON WITH ICON #}
+{% block button_submit_svg_icon_row %}
+    {# Remove div container #}
+    {{- form_widget(form) -}}
+{% endblock %}
 {% block button_submit_svg_icon_widget %}
     {{ block('button_start') }}
         {% if svgPosition == 'right' %}
             {{ block('button_label') }}
-            <span class="form-button-icon">{{ svgIcon|raw }}</span>
+            {{ svgIcon|raw }}
         {% else %}
-            <span class="form-button-icon">{{ svgIcon|raw }}</span>
+            {{ svgIcon|raw }}
             {{ block('button_label') }}
         {% endif %}
     </button>
@@ -169,4 +186,3 @@
     {% set attr = attr|merge({class: (attr.class|default('') ~ ' app-field-input')|trim}) %}
     <textarea {{ block('base_attributes') }}>{{ value }}</textarea>
 {% endblock %}
-

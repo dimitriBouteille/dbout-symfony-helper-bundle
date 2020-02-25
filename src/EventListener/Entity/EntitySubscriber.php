@@ -2,8 +2,8 @@
 
 namespace Dbout\Bundle\SymfonyHelperBundle\EventListener\Entity;
 
-use Dbout\Bundle\SymfonyHelperBundle\Entity\DoctrineEvents\CreatedAtEntity;
-use Dbout\Bundle\SymfonyHelperBundle\Entity\DoctrineEvents\UpdatedAtEntity;
+use Dbout\Bundle\SymfonyHelperBundle\Entity\DoctrineEvent\CreatedAtEntity;
+use Dbout\Bundle\SymfonyHelperBundle\Entity\DoctrineEvent\UpdatedAtEntity;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\Common\Persistence\Event\LifecycleEventArgs;
 use Doctrine\ORM\Events;
@@ -53,7 +53,7 @@ class EntitySubscriber implements EventSubscriber
      */
     private function updatedAt($object): void
     {
-        if($object instanceof UpdatedAtEntity && empty($object->getUpdatedAt())) {
+        if($object instanceof UpdatedAtEntity) {
             $object->setUpdatedAt(new \DateTime('now'));
         }
     }

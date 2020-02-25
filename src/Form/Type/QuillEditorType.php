@@ -24,8 +24,7 @@ class QuillEditorType extends TextareaType
 
         // Toolbar modules : https://quilljs.com/docs/modules/toolbar/#container
         // https://quilljs.com/docs/modules/toolbar/
-        $resolver->setDefault('toolbar-modules', ['bold', 'italic', 'underline', 'strike'])
-            ->setAllowedTypes('toolbar-modules', 'string[]');
+        $resolver->setDefault('toolbar-modules', ['bold', 'italic', 'underline', 'strike']);
 
         // Theme : https://quilljs.com/docs/themes/
         $resolver->setDefault('theme', 'snow')

@@ -1,0 +1,78 @@
+{% if pageCount > 1 %}
+<ul class="pagination">
+
+    {% if previous is defined %}
+        <li class="pagination-item pagination-direction pagination-direction--prev">
+            <a class="pagination-link" href="{{ paginationUrl(previous) }}" aria-label="Aller sur la page précédente">
+                {% block pagination_prev_content %}
+                    <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20">
+                        <path d="M3.828 9l6.071-6.071-1.414-1.414-8.485 8.485 8.485 8.485 1.414-1.414-6.071-6.071h16.172v-2h-16.172z"></path>
+                    </svg>
+                {% endblock %}
+            </a>
+        </li>
+    {% endif %}
+
+    <li class="pagination-counter">
+        <span>Page</span> <span class="pagination-counter-current">{{ current }}</span>/ {{ pageCount }}
+    </li>
+
+    {% if first == current %}
+        <li class="pagination-item pagination-item--current">
+            <a href="{{ paginationUrl(first) }}" aria-current="page" aria-label="Page {{ first }}" class="pagination-link pagination-link--current">{{ first }}</a>
+        </li>
+    {% else %}
+        <li class="pagination-item">
+            <a href="{{ paginationUrl(first) }}" aria-label="Aller sur la page {{ first }}" class="pagination-link">{{ first }}</a>
+        </li>
+    {% endif %}
+
+    {% if pagesInRange[0] - first >= 2 %}
+        <li class="pagination-item pagination-ellipsis">
+            <span class="shop-pagination-ellipsis">...</span>
+        </li>
+    {% endif %}
+
+    {% for page in pagesInRange %}
+        {% if first != page and page != last %}
+            {% if page == current %}
+                <li class="pagination-item pagination-item--current">
+                    <a href="{{ paginationUrl(page) }}" aria-current="page" aria-label="Page {{ page }}" class="shop-pagination-link d-flex align-full bg-primary current">{{ page }}</a>
+                </li>
+            {% else %}
+                <li class="pagination-item">
+                    <a href="{{ paginationUrl(page) }}" aria-current="page" aria-label="Aller sur la page {{ page }}" class="shop-pagination-link d-flex align-full">{{ page }}</a>
+                </li>
+            {% endif %}
+        {% endif %}
+    {% endfor %}
+
+    {% if last - pagesInRange[pagesInRange|length - 1] >= 2 %}
+        <li class="pagination-item pagination-ellipsis">
+            <span class="shop-pagination-ellipsis">...</span>
+        </li>
+    {% endif %}
+
+    {% if last == current %}
+        <li class="pagination-item pagination-item--current">
+            <a href="{{ paginationUrl(last) }}" aria-current="page" aria-label="Page {{ last }}" class="pagination-link pagination-link--current">{{ last }}</a>
+        </li>
+    {% else %}
+        <li class="pagination-item">
+            <a href="{{ paginationUrl(last) }}" aria-label="Aller sur la page {{ last }}" class="pagination-link">{{ last }}</a>
+        </li>
+    {% endif %}
+
+    {% if next is defined %}
+        <li class="pagination-item pagination-direction pagination-direction--next">
+            <a class="pagination-link" href="{{ paginationUrl(next) }}">
+                {% block pagination_next_content %}
+                    <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20">
+                        <path d="M16.172 9l-6.071-6.071 1.414-1.414 8.485 8.485-8.485 8.485-1.414-1.414 6.071-6.071h-16.172v-2z"></path>
+                    </svg>
+                {% endblock %}
+            </a>
+        </li>
+    {% endif %}
+</ul>
+{% endif %}

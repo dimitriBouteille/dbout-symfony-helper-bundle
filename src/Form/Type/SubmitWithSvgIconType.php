@@ -8,6 +8,7 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\SubmitButtonTypeInterface;
+use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
@@ -45,10 +46,19 @@ class SubmitWithSvgIconType extends SubmitType implements SubmitButtonTypeInterf
         $resolver->setDefaults([
             'iconName' =>       null,
             'iconPosition' =>   'right',
+            'withLoading' =>    true,
         ]);
+        $resolver->addAllowedValues('iconPosition', ['left', 'right'])
+            ->addAllowedTypes('withLoading', ['boolean'])
+            ->isRequired('iconName');
 
-        $resolver->addAllowedValues('iconPosition', ['left', 'right']);
-        $resolver->isRequired('iconName');
+        $resolver->setNormalizer('attr', function (Options $options, $value) {
+            if($options['withLoading'] === true) {
+                $value = array_merge($value, ['is' => 'loading-button']);
+            }
+            return $value;
+        });
+
     }
 
     /**
